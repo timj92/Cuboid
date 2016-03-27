@@ -19,6 +19,8 @@ static BitmapLayer *bottomleft_image;
 static BitmapLayer *bottomright_image;
 
 static Window *s_main_window;
+static GBitmap *bg_grass;
+static BitmapLayer *background_image;
 
 static void center() {
   if(bitmap_layer_get_bitmap(topleft_image) == num1right && bitmap_layer_get_bitmap(topright_image) != num1left) {
@@ -115,6 +117,15 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 static void main_window_load(Window *window) {
   // Get information about the Window
   Layer *window_layer = window_get_root_layer(window);
+  GRect bounds = layer_get_bounds(window_layer);
+  
+  // Set background
+  if(watch_info_get_model() != WATCH_INFO_MODEL_PEBBLE_ORIGINAL && watch_info_get_model() != WATCH_INFO_MODEL_PEBBLE_STEEL) {
+    bg_grass = gbitmap_create_with_resource(RESOURCE_ID_BG_GRASS);
+    background_image = bitmap_layer_create(bounds);
+    bitmap_layer_set_bitmap(background_image, bg_grass);
+    layer_add_child(window_layer, bitmap_layer_get_layer(background_image));
+  }
   
   // Create GBitmaps
   num0 = gbitmap_create_with_resource(RESOURCE_ID_NUM_0);
